@@ -1,0 +1,6 @@
+{
+	"languageToolLinter.diagnosticSeverityAuto": false,
+	"languageToolLinter.hideDiagnosticsOnChange": true,
+	"languageToolLinter.plainText.enabled": true,
+	"languageToolLinter.enabled": true
+}
