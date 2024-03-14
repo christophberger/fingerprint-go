@@ -124,7 +124,7 @@ func run() error {
 			}
 		}
 
-		// Send a response
+		// Send the response (either "thank you" or "you already signed up")
 		w.Header().Add("Location", "/response")
 		var response bytes.Buffer
 		err = tmplResponse.ExecuteTemplate(&response, "response", msg)
@@ -155,7 +155,6 @@ func run() error {
 func main() {
 	err := run()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s\n", err)
-		os.Exit(1)
+		log.Fatalf("%s\n", err)
 	}
 }
