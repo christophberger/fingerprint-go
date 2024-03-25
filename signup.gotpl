@@ -34,9 +34,6 @@
 			<label for="email">Email:</label>
 			<input type="email" id="email" name="email" autocomplete="email" required>
 
-			<label for="password">Password:</label>
-			<input type="password" id="password" name="password" autocomplete="current-password" required>
-
 			<input name="visitorId" id="visitorId" value="" hidden>
 			<input name="requestId" id="requestId" value="" hidden>
 

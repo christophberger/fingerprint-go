@@ -11,7 +11,6 @@ import (
 
 	"github.com/christophberger/fingerprintjs-go/internal/fingerprint"
 	"github.com/christophberger/fingerprintjs-go/internal/store"
-	"golang.org/x/crypto/bcrypt"
 
 	"github.com/joho/godotenv"
 )
@@ -92,13 +91,12 @@ func run() error {
 		}
 
 		email := r.FormValue("email")
-		password := r.FormValue("password")
 		visitorId := r.FormValue("visitorId")
 		requestId := r.FormValue("requestId")
 
 		log.Printf("Email: %s, Visitor ID: %s\n", email, visitorId)
 
-		msg := "Thank you for signing up!"
+		msg := ""
 
 		// Check if the visitor ID already exists in the database
 		visitorExists, err := users.Check(visitorId)
@@ -108,17 +106,11 @@ func run() error {
 			return
 		}
 		if visitorExists {
-			msg = "You already have signed up. Please log in with your existing account."
+			msg = "Someone else has signed up from this device in the last minute! To prevent fraudulent mass signups, we restricted the number of signups per device to one signup per minute. Please try again later."
 		} else {
 
 			// Add the user to the database
-			pwHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-			if err != nil {
-				log.Printf("/signup: hash password: %s\n", err)
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
-			err = users.Add(email, string(pwHash), visitorId)
+			msg, err = users.Add(email, visitorId)
 			if err != nil {
 				log.Printf("/signup: add user: %s\n", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
