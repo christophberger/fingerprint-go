@@ -10,7 +10,7 @@ import (
 	"text/template"
 
 	"github.com/christophberger/fingerprintjs-go/internal/fingerprint"
-	store "github.com/christophberger/fingerprintjs-go/internal/store"
+	"github.com/christophberger/fingerprintjs-go/internal/store"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/joho/godotenv"
@@ -128,8 +128,10 @@ func run() error {
 
 		// Get additional client information through the Go SDK
 
+		log.Printf("Server-side check for request ID %s\n", requestId)
 		fp := fingerprint.New()
-		fp.Check(requestId) // this call prints some device details to the terminal
+		identification := fp.Check(requestId)
+		log.Printf("Request Identification: %s\n", identification)
 
 		// Send the response (either "thank you" or "you already signed up")
 		w.Header().Add("Location", "/response")

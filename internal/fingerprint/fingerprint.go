@@ -3,12 +3,11 @@ package fingerprint
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"strings"
 
-	"github.com/fingerprintjs/fingerprint-pro-server-api-go-sdk/sdk"
+	"github.com/fingerprintjs/fingerprint-pro-server-api-go-sdk/v5/sdk"
 )
 
 type Client struct {
@@ -22,10 +21,10 @@ func New() *Client {
 	client := sdk.NewAPIClient(cfg)
 
 	// Default region is sdk.RegionUS
-	if strings.ToLower(os.Getenv("REGION")) == "eu" {
+	if strings.ToLower(os.Getenv("FINGERPRINT_REGION")) == "eu" {
 		cfg.ChangeRegion(sdk.RegionEU)
 	}
-	if strings.ToLower(os.Getenv("REGION")) == "ap" {
+	if strings.ToLower(os.Getenv("FINGERPRINT_REGION")) == "ap" {
 		cfg.ChangeRegion(sdk.RegionAsia)
 	}
 
@@ -36,28 +35,31 @@ func New() *Client {
 	}
 }
 
-func (c *Client) Check(requestId string) {
+func (c *Client) Check(requestId string) string {
 
 	// Configure authorization, in our case with API Key
 	auth := context.WithValue(context.Background(), sdk.ContextAPIKey, sdk.APIKey{
 		Key: c.APIKey,
 	})
 
+	log.Printf("Checking request %s with API key %s in region %s\n", requestId, c.APIKey, c.Cfg.GetRegion())
+
 	response, httpRes, err := c.API.FingerprintApi.GetEvent(auth, requestId)
 
-	fmt.Printf("HTTP response: %+v\n", httpRes)
+	log.Printf("HTTP response: %+v\n", httpRes)
 
 	if err != nil {
 		log.Fatalf("FingerprintApi.GetEvent: %s\n", err)
 	}
 
 	if response.Products.Botd != nil {
-		fmt.Printf("Got response with Botd: %v \n", response.Products.Botd)
+		log.Printf("Got response with Botd: %v \n", response.Products.Botd)
 	}
 
-	if response.Products.Identification != nil {
-		stringResponse, _ := json.Marshal(response.Products.Identification)
-		fmt.Printf("Got response with Identification: %s \n", string(stringResponse))
-
+	if response.Products.Identification == nil {
+		return ""
 	}
+	stringResponse, _ := json.Marshal(response.Products.Identification)
+	return string(stringResponse)
+
 }
