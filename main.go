@@ -122,8 +122,15 @@ func run() error {
 
 		log.Printf("Server-side check for request ID %s\n", requestId)
 		fp := fingerprint.New()
-		identification := fp.Check(requestId)
-		log.Printf("Request Identification: %s\n", identification)
+		success, err := fp.Check(requestId, visitorId)
+		if err != nil {
+			log.Printf("/signup: check fingerprint: %s\n", err)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+		if !success {
+			msg = "Error verifying the signup attempt. Please try again."
+		}
 
 		// Send the response (either "thank you" or "you already signed up")
 		w.Header().Add("Location", "/response")

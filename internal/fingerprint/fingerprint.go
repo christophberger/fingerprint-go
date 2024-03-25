@@ -3,6 +3,7 @@ package fingerprint
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -35,7 +36,7 @@ func New() *Client {
 	}
 }
 
-func (c *Client) Check(requestId string) string {
+func (c *Client) Check(requestId, visitorId string) (passed bool, err error) {
 
 	// Configure authorization, in our case with API Key
 	auth := context.WithValue(context.Background(), sdk.ContextAPIKey, sdk.APIKey{
@@ -46,20 +47,19 @@ func (c *Client) Check(requestId string) string {
 
 	response, httpRes, err := c.API.FingerprintApi.GetEvent(auth, requestId)
 
-	log.Printf("HTTP response: %+v\n", httpRes)
+	// See all the data that you can run verifications against
+	r, _ := json.MarshalIndent(response, "", "\t")
+	log.Printf("%v\n", string(r))
 
-	if err != nil {
-		log.Fatalf("FingerprintApi.GetEvent: %s\n", err)
+	if err != nil || httpRes.StatusCode != 200 {
+		return false, fmt.Errorf("FingerprintApi.GetEvent: HTTP %d: %w\n", httpRes.StatusCode, err)
 	}
 
-	if response.Products.Botd != nil {
-		log.Printf("Got response with Botd: %v \n", response.Products.Botd)
+	// Compare the fingerprints, to detect if the fingerprint received from the browser has been tampered with
+
+	if response.Products.Identification.Data.VisitorId != visitorId {
+		return false, fmt.Errorf("fingerprint mismatch: expected %s, got %s\n", visitorId, response.Products.Identification.Data.VisitorId)
 	}
 
-	if response.Products.Identification == nil {
-		return ""
-	}
-	stringResponse, _ := json.Marshal(response.Products.Identification)
-	return string(stringResponse)
-
+	return true, nil
 }

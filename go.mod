@@ -5,7 +5,6 @@ go 1.22.1
 require (
 	github.com/fingerprintjs/fingerprint-pro-server-api-go-sdk/v5 v5.0.1
 	github.com/joho/godotenv v1.5.1
-	golang.org/x/crypto v0.21.0
 	modernc.org/sqlite v1.29.4
 )
 
