@@ -27,6 +27,7 @@ nav a:hover {
 main {
 	padding: 20px;
 	margin: auto;
+	max-width: 30em;
 }
 
 form {
