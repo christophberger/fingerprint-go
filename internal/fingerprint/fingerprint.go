@@ -36,7 +36,7 @@ func New() *Client {
 	}
 }
 
-func (c *Client) Check(requestId, visitorId string) (passed bool, err error) {
+func (c *Client) Validate(requestId, visitorId string) (passed bool, err error) {
 
 	// Configure authorization, in our case with API Key
 	auth := context.WithValue(context.Background(), sdk.ContextAPIKey, sdk.APIKey{
