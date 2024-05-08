@@ -9,8 +9,8 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/christophberger/fingerprintjs-go/internal/fingerprint"
-	"github.com/christophberger/fingerprintjs-go/internal/store"
+	"github.com/christophberger/fingerprint-go/internal/fingerprint"
+	"github.com/christophberger/fingerprint-go/internal/store"
 
 	"github.com/joho/godotenv"
 )
@@ -122,9 +122,9 @@ func run() error {
 
 		log.Printf("Server-side check for request ID %s\n", requestId)
 		fp := fingerprint.New()
-		success, err := fp.Check(requestId, visitorId)
+		success, err := fp.Validate(requestId, visitorId)
 		if err != nil {
-			log.Printf("/signup: check fingerprint: %s\n", err)
+			log.Printf("/signup: validate fingerprint: %s\n", err)
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}

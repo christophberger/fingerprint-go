@@ -1,4 +1,4 @@
-module github.com/christophberger/fingerprintjs-go
+module github.com/christophberger/fingerprint-go
 
 go 1.22.1
 
