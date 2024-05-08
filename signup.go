@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/christophberger/fingerprintjs-go/internal/fingerprint"
-	"github.com/christophberger/fingerprintjs-go/internal/store"
 	"bytes"
 	"log"
 	"net/http"
 	"text/template"
+
+	"github.com/christophberger/fingerprint-go/internal/fingerprint"
+	"github.com/christophberger/fingerprint-go/internal/store"
 )
 
 func setSignupHandler(users *store.Users, tmplResponse *template.Template) {
